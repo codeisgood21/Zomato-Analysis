@@ -1,9 +1,4 @@
-"""Tiny DuckDB helper shared by analysis.ipynb and app.py.
 
-This is the single place that knows how the Zomato data gets loaded and how
-queries.sql gets parsed. Both the notebook and the Streamlit dashboard call
-`run_query()` against the exact same SQL — nothing is duplicated between them.
-"""
 from pathlib import Path
 
 import duckdb
@@ -14,7 +9,7 @@ QUERIES_FILE = Path(__file__).parent / "queries.sql"
 
 
 def _load_queries() -> dict[str, str]:
-    """Parse queries.sql into {name: sql} using `-- name: <name>` markers."""
+  
     queries: dict[str, str] = {}
     name = None
     buf: list[str] = []
@@ -35,22 +30,13 @@ _QUERIES = _load_queries()
 
 
 def get_connection() -> duckdb.DuckDBPyConnection:
-    """Open an in-memory DuckDB connection with the Zomato tables loaded.
-
-    Callers should hold onto the returned connection and reuse it across
-    multiple run_query() calls rather than reopening it each time — the
-    CSV load is the expensive part, not the queries.
-    """
+ 
     con = duckdb.connect(database=":memory:")
 
-    # DuckDB's CSV encoding sniffing chokes on this file (it's Windows-1252,
-    # not clean UTF-8 or latin-1), so pandas reads it and DuckDB just
-    # registers the resulting DataFrame as a table.
+    
     restaurants = pd.read_csv(DATA_DIR / "zomato.csv", encoding="latin-1")
     con.register("restaurants", restaurants)
 
-    # DuckDB can't read .xlsx directly, so the country-code lookup is loaded
-    # via pandas and registered as a DuckDB view.
     country_codes = pd.read_excel(DATA_DIR / "Country-Code.xlsx")
     con.register("country_codes", country_codes)
 
