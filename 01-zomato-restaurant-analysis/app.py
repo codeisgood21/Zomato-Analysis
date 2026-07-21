@@ -1,12 +1,4 @@
-"""Zomato Restaurant Analytics — Streamlit dashboard.
 
-Run with:
-    streamlit run app.py
-
-Every chart here is backed by the exact same named SQL queries used in
-analysis.ipynb (see queries.sql / db.py) — this file is just the
-presentation layer on top of them.
-"""
 import duckdb
 import plotly.express as px
 import streamlit as st
@@ -18,8 +10,7 @@ st.set_page_config(page_title="Zomato Restaurant Analytics", page_icon="🍽️"
 
 @st.cache_resource
 def get_con() -> duckdb.DuckDBPyConnection:
-    # Cached so the CSV/Excel load only happens once per Streamlit session,
-    # not on every widget interaction.
+  
     return db.get_connection()
 
 
